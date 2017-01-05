@@ -8,8 +8,10 @@
 #include <SDL.h>
 #include "texture.h"
 #include "constants.h"
+#include "Collider.h"
+#include "Platform.h"
 
-class Dot {
+class Dot : public Collider {
 public:
     static const int DOT_WIDTH = 40;
     static const int DOT_HEIGHT = 40;
@@ -17,11 +19,15 @@ public:
     static const int DOT_VELOCITY = 10;
 
     explicit Dot(Texture *dotTexture);
+    Dot(int velX, int velY, Texture *dotTexture);
     ~Dot();
 
     void HandleEvent(SDL_Event &e);
-    void Move();
+    void Move(const Platform &platform);
     void Render();
+    void Reset(int velX, int velY);
+
+    SDL_Rect GetBox() const override;
 
 private:
     int m_velX, m_velY;

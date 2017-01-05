@@ -12,6 +12,7 @@
 #include "dot.h"
 #include "Platform.h"
 #include "constants.h"
+#include <stdio.h>
 
 class MainWindow {
 public:
@@ -21,6 +22,7 @@ public:
 
 private:
     void loadMedia();
+    int getRandomVelocity();
     void handleSDLError(std::string customMessage);
     void handleIMGError(std::string customMessage);
     void handleMixError(std::string customMessage);
@@ -97,33 +99,66 @@ void MainWindow::Run() {
     bool quit = false;
     SDL_Event e;
 
-    Dot dot(m_dotTexture);
-    Platform platform(m_platformTexture);
+    Dot dot(getRandomVelocity(), getRandomVelocity(), m_dotTexture);
+    Platform platform(PLATFORM_RIGHT, m_platformTexture);
+    int lives = 3;
+
+    Timer fpsTimer;
 
     while (!quit) {
+        fpsTimer.Start();
+
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
                 quit = true;
             }
-            dot.HandleEvent(e);
+            if (lives < 0) {
+                if (e.type == SDL_KEYDOWN && e.key.repeat == 0) {
+                    lives = 3;
+                }
+            }
             platform.HandleEvent(e);
         }
 
         SDL_SetRenderDrawColor(m_renderer, 0x00, 0x00, 0x00, 0xFF);
         SDL_RenderClear(m_renderer);
 
-        dot.Move();
-        dot.Render();
+        if (lives >= 0) {
+            platform.Move();
+            dot.Move(platform);
+            if (dot.GetBox().x > (SCREEN_WIDTH - Dot::DOT_WIDTH)) { // kill zone - game lost
+                lives -= 1;
+                dot.Reset(getRandomVelocity(), getRandomVelocity());
+            }
 
-        platform.Move();
-        platform.Render();
+            platform.Render();
+            dot.Render();
+
+            std::ostringstream livesLabelText("");
+            livesLabelText << "Lives: " << lives;
+            Texture livesLabel(livesLabelText.str(), m_renderer, m_font, {0xFF, 0xFF, 0xFF, 0xFF});
+            livesLabel.Render(SCREEN_WIDTH - 100, 10);
+        } else {
+            Texture gameOver("Game Over! Press any key to play again...", m_renderer, m_font, { 0xFF, 0xFF, 0xFF, 0xFF});
+            gameOver.Render((SCREEN_WIDTH - gameOver.Width()) / 2,
+                            (SCREEN_HEIGHT - gameOver.Height()) / 2);
+        }
 
         SDL_RenderPresent(m_renderer);
+
+        auto frameTicks = fpsTimer.GetTicks();
+        if (frameTicks < TARGET_TICKS_PER_FRAME) {
+            SDL_Delay(TARGET_TICKS_PER_FRAME - frameTicks);
+        }
     }
 };
 
+int MainWindow::getRandomVelocity() {
+    return rand() % 5 + 5;
+}
+
 void MainWindow::loadMedia() {
-    m_font = TTF_OpenFont("lazy.ttf", 14);
+    m_font = TTF_OpenFont("lazy.ttf", 18);
     if (m_font == nullptr) {
         handleTTFError("Failed to load font");
     }

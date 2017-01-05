@@ -7,7 +7,7 @@ set(SOURCE_FILES main.cpp
                  texture.h
                  texture.cpp
                  timer.h
-                 timer.cpp dot.cpp dot.h CollisionUtils.cpp CollisionUtils.h constants.h Platform.cpp Platform.h)
+                 timer.cpp dot.cpp dot.h CollisionUtils.cpp CollisionUtils.h constants.h Platform.cpp Platform.h Collider.cpp Collider.h)
 add_executable(pong ${SOURCE_FILES})
 
 INCLUDE(FindPkgConfig)

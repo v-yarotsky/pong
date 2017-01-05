@@ -7,23 +7,31 @@
 
 #include <SDL.h>
 #include "texture.h"
+#include "COllider.h"
 #include "constants.h"
 
-class Platform {
+enum PlatformPosition {
+    PLATFORM_LEFT,
+    PLATFORM_RIGHT
+};
+
+class Platform : public Collider {
 
 public:
     static const int PLATFORM_WIDTH = 40;
     static const int PLATFORM_HEIGHT = 160;
 
-    static const int PLATFORM_VELOCITY = 5;
+    static const int PLATFORM_VELOCITY = 8;
 
     explicit Platform(Texture *platformTexture);
+    Platform(PlatformPosition position, Texture *platformTexture);
     ~Platform();
 
     void HandleEvent(SDL_Event &e);
     void Move();
     void Render();
 
+    SDL_Rect GetBox() const override;
 private:
     int m_velY;
     Texture *m_platformTexture;
