@@ -4,12 +4,12 @@
 
 #include "DotWithParticles.h"
 
-DotWithParticles::DotWithParticles(int velX, int velY, Texture *m_dotTexture, Texture *p1, Texture *p2, Texture *p3, Texture *shimmer)
-        : Dot(velX, velY, m_dotTexture),
-          m_p1(p1),
-          m_p2(p2),
-          m_p3(p3),
-          m_shimmer(shimmer) {
+DotWithParticles::DotWithParticles(int velX, int velY, TextureMap &textureMap)
+        : Dot(velX, velY, textureMap),
+          m_p1(textureMap["particle_red"]),
+          m_p2(textureMap["particle_green"]),
+          m_p3(textureMap["particle_blue"]),
+          m_shimmer(textureMap["particle_shimmer"]) {
 
     for (int i = 0; i < TOTAL_PARTICLES; ++i) {
         m_particles[i] = makeParticle();

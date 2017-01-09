@@ -8,10 +8,11 @@
 #include "dot.h"
 #include "texture.h"
 #include "Particle.h"
+#include "TextureMap.h"
 
 class DotWithParticles : public Dot {
 public:
-    DotWithParticles(int velX, int velY, Texture *m_dotTexture, Texture *p1, Texture *p2, Texture *p3, Texture *shimmer);
+    DotWithParticles(int velX, int velY, TextureMap &textureMap);
     ~DotWithParticles();
 
     void Render();

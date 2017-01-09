@@ -7,8 +7,9 @@
 
 #include <SDL.h>
 #include "texture.h"
-#include "COllider.h"
+#include "Collider.h"
 #include "constants.h"
+#include "TextureMap.h"
 
 enum PlatformPosition {
     PLATFORM_LEFT,
@@ -23,8 +24,8 @@ public:
 
     static const int PLATFORM_VELOCITY = 8;
 
-    explicit Platform(Texture *platformTexture);
-    Platform(PlatformPosition position, Texture *platformTexture);
+    explicit Platform(TextureMap &textureMap);
+    Platform(PlatformPosition position, TextureMap &textureMap);
     ~Platform();
 
     void HandleEvent(SDL_Event &e);

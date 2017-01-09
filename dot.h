@@ -10,6 +10,7 @@
 #include "constants.h"
 #include "Collider.h"
 #include "Platform.h"
+#include "TextureMap.h"
 
 class Dot : public Collider {
 public:
@@ -18,8 +19,8 @@ public:
 
     static const int DOT_VELOCITY = 10;
 
-    explicit Dot(Texture *dotTexture);
-    Dot(int velX, int velY, Texture *dotTexture);
+    explicit Dot(TextureMap &textureMap);
+    Dot(int velX, int velY, TextureMap &textureMap);
     ~Dot();
 
     void HandleEvent(SDL_Event &e);

@@ -5,12 +5,12 @@
 #include "dot.h"
 #include "CollisionUtils.h"
 
-Dot::Dot(Texture *dotTexture)
-        : Dot(0, 0, dotTexture) {
+Dot::Dot(TextureMap &textureMap)
+        : Dot(0, 0, textureMap) {
 }
 
-Dot::Dot(int velX, int velY, Texture *dotTexture) {
-    m_dotTexture = dotTexture;
+Dot::Dot(int velX, int velY, TextureMap &textureMap) {
+    m_dotTexture = textureMap["dot"];
 
     m_velX = velX;
     m_velY = velY;

@@ -12,6 +12,7 @@
 #include "DotWithParticles.h"
 #include "Platform.h"
 #include "constants.h"
+#include "TextureMap.h"
 
 class Screen {
 public:
@@ -28,10 +29,12 @@ public:
 
 class GameScreen : public Screen {
 public:
-    GameScreen(GameOrchestrator *orchestrator, Texture *dotTexture, Texture *platformTexture, Texture *p1Texture, Texture *p2Texture, Texture *p3Texture, Texture *shimmerTexture, PlatformPosition platformPosition = PLATFORM_RIGHT)
+    GameScreen(GameOrchestrator *orchestrator, TextureMap &textureMap, PlatformPosition platformPosition = PLATFORM_RIGHT)
             : m_orchestrator(orchestrator),
-              m_dot(getRandomVelocity(), getRandomVelocity(), dotTexture, p1Texture, p2Texture, p3Texture, shimmerTexture),
-              m_platform(platformPosition, platformTexture) {
+              m_dot(getRandomVelocity(),
+                    getRandomVelocity(),
+                    textureMap),
+              m_platform(platformPosition, textureMap) {
     }
 
     void HandleEvent(SDL_Event &e) override {
@@ -127,13 +130,11 @@ public:
         SDL_DestroyWindow(m_window);
         SDL_DestroyRenderer(m_renderer);
 
-        delete m_dotTexture;
-        delete m_platformTexture;
         delete m_gameOverTexture;
-        delete m_redParticleTexture;
-        delete m_greenParticleTexture;
-        delete m_blueParticleTexture;
-        delete m_shimmerParticleTexture;
+
+        for (auto const& textureMapTuple : m_textures) {
+            delete textureMapTuple.second;
+        }
 
         TTF_Quit();
         Mix_Quit();
@@ -197,13 +198,15 @@ private:
         }
 
         try {
-            m_dotTexture = new Texture(m_renderer, "dot.png");
-            m_platformTexture = new Texture(m_renderer, "platform.png");
             m_gameOverTexture = new Texture("Game Over! Press any key to play again...", m_renderer, m_font, {0xFF, 0xFF, 0xFF, 0xFF});
-            m_redParticleTexture = new Texture(m_renderer, "red.bmp", true);
-            m_greenParticleTexture = new Texture(m_renderer, "green.bmp", true);
-            m_blueParticleTexture = new Texture(m_renderer, "blue.bmp", true);
-            m_shimmerParticleTexture = new Texture(m_renderer, "shimmer.bmp", true);
+
+            m_textures["dot"] = new Texture(m_renderer, "dot.png");
+            m_textures["platform"] = new Texture(m_renderer, "platform.png");
+            m_textures["particle_red"] = new Texture(m_renderer, "red.bmp", true);
+            m_textures["particle_green"] = new Texture(m_renderer, "green.bmp", true);
+            m_textures["particle_blue"] = new Texture(m_renderer, "blue.bmp", true);
+            m_textures["particle_shimmer"] = new Texture(m_renderer, "shimmer.bmp", true);
+
         } catch (TextureLoadException &e) {
             handleError("Failed to load dot texture", e);
         }
@@ -218,7 +221,7 @@ private:
     }
 
     Screen* makeGameScreen() {
-        return new GameScreen(this, m_dotTexture, m_platformTexture, m_redParticleTexture, m_greenParticleTexture, m_blueParticleTexture, m_shimmerParticleTexture);
+        return new GameScreen(this, m_textures);
     }
 
     Screen* makeGameOverScreen() {
@@ -252,14 +255,10 @@ private:
 
     SDL_Window  *m_window = nullptr;
     SDL_Renderer *m_renderer = nullptr;
-    Texture *m_dotTexture = nullptr;
-    Texture *m_platformTexture = nullptr;
     Texture *m_gameOverTexture = nullptr;
-    Texture *m_redParticleTexture = nullptr;
-    Texture *m_greenParticleTexture = nullptr;
-    Texture *m_blueParticleTexture = nullptr;
-    Texture *m_shimmerParticleTexture = nullptr;
     TTF_Font *m_font = nullptr;
+
+    TextureMap m_textures;
 
     Screen *m_currentScreen = nullptr;
 

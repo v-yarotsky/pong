@@ -4,8 +4,8 @@
 
 #include "Platform.h"
 
-Platform::Platform(PlatformPosition position, Texture *platformTexture) {
-    m_platformTexture = platformTexture;
+Platform::Platform(PlatformPosition position, TextureMap &textureMap) {
+    m_platformTexture = textureMap["platform"];
 
     m_velY = 0;
 
@@ -18,8 +18,8 @@ Platform::Platform(PlatformPosition position, Texture *platformTexture) {
     m_box = { x, 0, PLATFORM_WIDTH, PLATFORM_HEIGHT };
 }
 
-Platform::Platform(Texture *platformTexture)
-        : Platform(PLATFORM_LEFT, platformTexture) {
+Platform::Platform(TextureMap &textureMap)
+        : Platform(PLATFORM_LEFT, textureMap) {
 }
 
 Platform::~Platform() {
