@@ -18,12 +18,16 @@ const char* TextureLoadException::what() const throw() {
 
 
 
-Texture::Texture(SDL_Renderer *renderer, std::string path) {
+Texture::Texture(SDL_Renderer *renderer, std::string path, bool colorKey) {
     SDL_Texture *newTexture;
 
     SDL_Surface *loadedSurface = IMG_Load(path.c_str());
     if (loadedSurface == nullptr) {
         throw TextureLoadException(path, IMG_GetError());
+    }
+
+    if (colorKey) {
+        SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0x00, 0xFF, 0xFF));
     }
 
     newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);

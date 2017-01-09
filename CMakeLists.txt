@@ -7,7 +7,7 @@ set(SOURCE_FILES main.cpp
                  texture.h
                  texture.cpp
                  timer.h
-                 timer.cpp dot.cpp dot.h CollisionUtils.cpp CollisionUtils.h constants.h Platform.cpp Platform.h Collider.cpp Collider.h)
+                 timer.cpp dot.cpp dot.h CollisionUtils.cpp CollisionUtils.h constants.h Platform.cpp Platform.h Collider.cpp Collider.h Particle.cpp Particle.h DotWithParticles.cpp DotWithParticles.h)
 add_executable(pong ${SOURCE_FILES})
 
 INCLUDE(FindPkgConfig)
@@ -31,4 +31,9 @@ file(COPY "lazy.ttf" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 file(COPY "dot.png" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY "platform.png" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+file(COPY "red.bmp" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY "green.bmp" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY "blue.bmp" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY "shimmer.bmp" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 

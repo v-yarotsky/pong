@@ -9,7 +9,7 @@
 #include <vector>
 #include "texture.h"
 #include "timer.h"
-#include "dot.h"
+#include "DotWithParticles.h"
 #include "Platform.h"
 #include "constants.h"
 
@@ -28,9 +28,9 @@ public:
 
 class GameScreen : public Screen {
 public:
-    GameScreen(GameOrchestrator *orchestrator, Texture *dotTexture, Texture *platformTexture, PlatformPosition platformPosition = PLATFORM_RIGHT)
+    GameScreen(GameOrchestrator *orchestrator, Texture *dotTexture, Texture *platformTexture, Texture *p1Texture, Texture *p2Texture, Texture *p3Texture, Texture *shimmerTexture, PlatformPosition platformPosition = PLATFORM_RIGHT)
             : m_orchestrator(orchestrator),
-              m_dot(getRandomVelocity(), getRandomVelocity(), dotTexture),
+              m_dot(getRandomVelocity(), getRandomVelocity(), dotTexture, p1Texture, p2Texture, p3Texture, shimmerTexture),
               m_platform(platformPosition, platformTexture) {
     }
 
@@ -44,14 +44,14 @@ public:
         if (m_dot.GetBox().x > (SCREEN_WIDTH - Dot::DOT_WIDTH)) { // miss
             m_orchestrator->OnMiss();
             m_dot.Reset(getRandomVelocity(), getRandomVelocity());
+        } else {
+            m_platform.Render();
+            m_dot.Render();
         }
-
-        m_platform.Render();
-        m_dot.Render();
     }
 private:
     GameOrchestrator *m_orchestrator;
-    Dot m_dot;
+    DotWithParticles m_dot;
     Platform m_platform;
 
     int getRandomVelocity() const {
@@ -126,8 +126,14 @@ public:
         TTF_CloseFont(m_font);
         SDL_DestroyWindow(m_window);
         SDL_DestroyRenderer(m_renderer);
+
         delete m_dotTexture;
         delete m_platformTexture;
+        delete m_gameOverTexture;
+        delete m_redParticleTexture;
+        delete m_greenParticleTexture;
+        delete m_blueParticleTexture;
+        delete m_shimmerParticleTexture;
 
         TTF_Quit();
         Mix_Quit();
@@ -194,8 +200,12 @@ private:
             m_dotTexture = new Texture(m_renderer, "dot.png");
             m_platformTexture = new Texture(m_renderer, "platform.png");
             m_gameOverTexture = new Texture("Game Over! Press any key to play again...", m_renderer, m_font, {0xFF, 0xFF, 0xFF, 0xFF});
+            m_redParticleTexture = new Texture(m_renderer, "red.bmp", true);
+            m_greenParticleTexture = new Texture(m_renderer, "green.bmp", true);
+            m_blueParticleTexture = new Texture(m_renderer, "blue.bmp", true);
+            m_shimmerParticleTexture = new Texture(m_renderer, "shimmer.bmp", true);
         } catch (TextureLoadException &e) {
-            handleError("Failed to laod dot texture", e);
+            handleError("Failed to load dot texture", e);
         }
     }
 
@@ -208,7 +218,7 @@ private:
     }
 
     Screen* makeGameScreen() {
-        return new GameScreen(this, m_dotTexture, m_platformTexture);
+        return new GameScreen(this, m_dotTexture, m_platformTexture, m_redParticleTexture, m_greenParticleTexture, m_blueParticleTexture, m_shimmerParticleTexture);
     }
 
     Screen* makeGameOverScreen() {
@@ -245,6 +255,10 @@ private:
     Texture *m_dotTexture = nullptr;
     Texture *m_platformTexture = nullptr;
     Texture *m_gameOverTexture = nullptr;
+    Texture *m_redParticleTexture = nullptr;
+    Texture *m_greenParticleTexture = nullptr;
+    Texture *m_blueParticleTexture = nullptr;
+    Texture *m_shimmerParticleTexture = nullptr;
     TTF_Font *m_font = nullptr;
 
     Screen *m_currentScreen = nullptr;

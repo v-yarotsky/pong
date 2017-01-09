@@ -23,7 +23,7 @@ private:
 
 class Texture {
 public:
-    Texture(SDL_Renderer *renderer, std::string path);
+    Texture(SDL_Renderer *renderer, std::string path, bool colorKey = false);
     Texture(std::string text, SDL_Renderer *renderer, TTF_Font* font, SDL_Color textColor);
     ~Texture();
 
