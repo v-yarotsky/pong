@@ -105,7 +105,7 @@ public:
             handleTTFError("Failed to initialize SDL_ttf");
         }
 
-        m_window = SDL_CreateWindow("SDL Tutorial",
+        m_window = SDL_CreateWindow("Pong!!1",
                                     SDL_WINDOWPOS_CENTERED,
                                     SDL_WINDOWPOS_CENTERED,
                                     SCREEN_WIDTH,
@@ -135,6 +135,8 @@ public:
         for (auto const& textureMapTuple : m_textures) {
             delete textureMapTuple.second;
         }
+
+        Mix_FreeChunk(m_miss);
 
         TTF_Quit();
         Mix_Quit();
@@ -176,6 +178,7 @@ public:
     }
 
     void OnMiss() override {
+        Mix_PlayChannel(-1, m_miss, 0);
         m_lives -= 1;
         if (m_lives >= 0) {
             return;
@@ -209,6 +212,11 @@ private:
 
         } catch (TextureLoadException &e) {
             handleError("Failed to load dot texture", e);
+        }
+
+        m_miss = Mix_LoadWAV("flush.wav");
+        if (m_miss == nullptr) {
+            handleMixError("Failed to load sample");
         }
     }
 
@@ -257,8 +265,9 @@ private:
     SDL_Renderer *m_renderer = nullptr;
     Texture *m_gameOverTexture = nullptr;
     TTF_Font *m_font = nullptr;
-
     TextureMap m_textures;
+
+    Mix_Chunk *m_miss = nullptr;
 
     Screen *m_currentScreen = nullptr;
 
