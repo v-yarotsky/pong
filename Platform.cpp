@@ -28,13 +28,21 @@ Platform::~Platform() {
 void Platform::HandleEvent(SDL_Event &e) {
     if (e.type == SDL_KEYDOWN && e.key.repeat == 0) {
         switch(e.key.keysym.sym) {
-            case SDLK_k: m_velY -= PLATFORM_VELOCITY; break;
-            case SDLK_j: m_velY += PLATFORM_VELOCITY; break;
+            case SDLK_k: m_velY = -PLATFORM_VELOCITY; break;
+            case SDLK_j: m_velY =  PLATFORM_VELOCITY; break;
         }
     } else if (e.type == SDL_KEYUP && e.key.repeat == 0) {
         switch(e.key.keysym.sym) {
-            case SDLK_k: m_velY += PLATFORM_VELOCITY; break;
-            case SDLK_j: m_velY -= PLATFORM_VELOCITY; break;
+            case SDLK_k:
+                if (m_velY == -PLATFORM_VELOCITY) {
+                    m_velY = 0;
+                }
+                break;
+            case SDLK_j:
+                if (m_velY == PLATFORM_VELOCITY) {
+                    m_velY = 0;
+                }
+                break;
         }
     }
 }
