@@ -195,7 +195,13 @@ public:
 
 private:
     void loadMedia() {
-        m_font = TTF_OpenFont("lazy.ttf", 18);
+        const char *basePath = SDL_GetBasePath();
+        if (basePath == nullptr) {
+            std::runtime_error err("init error");
+            handleError("Failed to get data directory path", err);
+        }
+
+        m_font = TTF_OpenFont(strjoin(basePath, "lazy.ttf").c_str(), 18);
         if (m_font == nullptr) {
             handleTTFError("Failed to load font");
         }
@@ -203,18 +209,18 @@ private:
         try {
             m_gameOverTexture = new Texture("Game Over! Press any key to play again...", m_renderer, m_font, {0xFF, 0xFF, 0xFF, 0xFF});
 
-            m_textures["dot"] = new Texture(m_renderer, "dot.png");
-            m_textures["platform"] = new Texture(m_renderer, "platform.png");
-            m_textures["particle_red"] = new Texture(m_renderer, "red.bmp", true);
-            m_textures["particle_green"] = new Texture(m_renderer, "green.bmp", true);
-            m_textures["particle_blue"] = new Texture(m_renderer, "blue.bmp", true);
-            m_textures["particle_shimmer"] = new Texture(m_renderer, "shimmer.bmp", true);
+            m_textures["dot"] = new Texture(m_renderer, strjoin(basePath, "dot.png"));
+            m_textures["platform"] = new Texture(m_renderer, strjoin(basePath, "platform.png"));
+            m_textures["particle_red"] = new Texture(m_renderer, strjoin(basePath, "red.bmp"), true);
+            m_textures["particle_green"] = new Texture(m_renderer, strjoin(basePath, "green.bmp"), true);
+            m_textures["particle_blue"] = new Texture(m_renderer, strjoin(basePath, "blue.bmp"), true);
+            m_textures["particle_shimmer"] = new Texture(m_renderer, strjoin(basePath, "shimmer.bmp"), true);
 
         } catch (TextureLoadException &e) {
             handleError("Failed to load dot texture", e);
         }
 
-        m_miss = Mix_LoadWAV("flush.wav");
+        m_miss = Mix_LoadWAV(strjoin(basePath, "flush.wav").c_str());
         if (m_miss == nullptr) {
             handleMixError("Failed to load sample");
         }
@@ -259,6 +265,10 @@ private:
     void handleError(std::string customMessage, std::exception &e) {
         std::cerr << customMessage << " Exception: " << e.what() << std::endl;
         exit(EXIT_FAILURE);
+    }
+
+    std::string strjoin(const char *str1, const char *str2) const {
+        return std::string(str1) + std::string(str2);
     }
 
     SDL_Window  *m_window = nullptr;
